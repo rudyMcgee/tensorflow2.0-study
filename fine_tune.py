@@ -13,6 +13,8 @@
 
 note:微调是在迁移学习的基础上进行的，先冻结所有基础层，接着训练自定义分类层，然后解冻部分基础层，再次训练
 
+MobileNetV2模型期望输出被标准化至 [-1,1] 范围内，所以在我们传入输入数据时，需要将数据标准化到[-1,1]
+
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 import os
@@ -22,6 +24,8 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 import tensorflow.keras as keras
 
+
+tf.data.Dataset
 IMG_SIZE = 160
 BATCH_SIZE = 16
 SHUFFLE_BUFFER_SIZE = 1000
@@ -38,8 +42,8 @@ get_label_name = metadata.features['label'].int2str
 
 
 def format_example(image, label):
-    image = tf.cast(image, tf.float32)
-    image = (image / 255.0)
+    image = tf.cast(image, tf.float32)  # float32为实数[0,255]
+    image = (image / 127.5)-1 # 调整为[-1, 1]
     image = tf.image.resize(image, (IMG_SIZE, IMG_SIZE))
     return image, label
 
